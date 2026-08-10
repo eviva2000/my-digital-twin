@@ -1,6 +1,6 @@
 # My Digital Twin
 
-A conversational, AI-powered professional profile built with Gradio and the OpenAI API. The app uses a LinkedIn PDF and a written summary as its source material, then answers visitors' questions in character.
+A conversational, AI-powered professional profile built with Gradio and the OpenAI API. The app retrieves answers from a local RAG knowledge base built from the `knowledge/` folder, then answers visitors' questions in character.
 
 **Live app:** [my-digital-twin-37yz.onrender.com](https://my-digital-twin-37yz.onrender.com/)
 
@@ -18,10 +18,13 @@ Clone the repository and create a `.env` file in the project root:
 OPENAI_API_KEY=your_api_key_here
 ```
 
-Make sure these source files are present in the project root:
+Add your profile content as `.md`/`.txt` files in the `knowledge/` folder, then build the search index:
 
-- `linkedin.pdf` — the LinkedIn profile exported as a PDF
-- `summary.txt` — a concise professional summary
+```bash
+uv run rag.py
+```
+
+This creates a local index in `data/` (`rag_index.npy` + `rag_index.json`). Rebuild it whenever you edit the knowledge files.
 
 Install the locked dependencies and start the app:
 

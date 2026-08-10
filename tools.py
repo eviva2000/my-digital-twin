@@ -2,6 +2,7 @@ import json
 import os
 import requests
 from dotenv import load_dotenv
+from rag import search_profile as rag_search_profile
 
 load_dotenv(override=True)
 
@@ -30,6 +31,11 @@ def record_user_details(email, name="Name not provided", notes="not provided"):
 def record_unknown_question(question):
     push(f"Recording {question} asked that I couldn't answer")
     return "OK"
+
+
+def search_profile(question):
+    """Retrieve relevant background details from the RAG document index."""
+    return rag_search_profile(question)
 
 
 record_user_details_json = {
@@ -63,14 +69,29 @@ record_unknown_question_json = {
     },
 }
 
+search_profile_json = {
+    "name": "search_profile",
+    "description": "Semantically search the person's profile knowledge base for relevant background before answering. Use it for any career, skills, experience, or background question.",
+    "parameters": {
+        "type": "object",
+        "properties": {
+            "question": {"type": "string", "description": "The visitor's question or a concise search version of it"},
+        },
+        "required": ["question"],
+        "additionalProperties": False,
+    },
+}
+
 tools = [
     {"type": "function", "function": record_user_details_json},
     {"type": "function", "function": record_unknown_question_json},
+    {"type": "function", "function": search_profile_json},
 ]
 
 tool_map = {
     "record_user_details": record_user_details,
     "record_unknown_question": record_unknown_question,
+    "search_profile": search_profile,
 }
 
 
